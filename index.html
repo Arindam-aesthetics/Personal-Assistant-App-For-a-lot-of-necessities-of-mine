@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Assistant - Your Digital Swiss Army Knife</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zodiak:wght@400;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #FDFBF7;
+            --bg-secondary: #F7F3ED;
+            --bg-tertiary: #FFFFFF;
+            --text-primary: #1A1614;
+            --text-secondary: #5C5854;
+            --text-tertiary: #8F8B87;
+            --accent-primary: #E8744F;
+            --accent-secondary: #D4A574;
+            --accent-tertiary: #7B9E89;
+            --border-color: #E8E4DE;
+            --shadow-sm: 0 1px 3px rgba(26, 22, 20, 0.05);
+            --shadow-md: 0 4px 12px rgba(26, 22, 20, 0.08);
+            --shadow-lg: 0 10px 40px rgba(26, 22, 20, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1A1614;
+            --bg-secondary: #242220;
+            --bg-tertiary: #2D2A28;
+            --text-primary: #F7F3ED;
+            --text-secondary: #B8B4B0;
+            --text-tertiary: #8F8B87;
+            --border-color: #3A3734;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Zodiak', Georgia, serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        
+        .header {
+            position: sticky;
+            top: 0;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(253, 251, 247, 0.95);
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(26, 22, 20, 0.95);
+        }
+
+        .logo {
+            font-family: 'Zodiak', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        
+        .nav-container {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 0.5rem;
+            min-width: max-content;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        .nav-item.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view {
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .view-header {
+            margin-bottom: 2rem;
+        }
+
+        .view-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .view-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        
+        .card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d96642;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        
+        .input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: var(--transition);
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(232, 116, 79, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .dashboard-card {
+            grid-column: span 4;
+        }
+
+        .dashboard-card.wide {
+            grid-column: span 6;
+        }
+
+        .dashboard-card.full {
+            grid-column: span 12;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            font-family: 'Zodiak', serif;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        
+        .calculator-display {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            border: 2px solid var(--border-color);
+        }
+
+        .calc-input {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-align: right;
+            min-height: 1.5rem;
+        }
+
+        .calc-output {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: right;
+            font-family: 'Zodiak', serif;
+            word-break: break-all;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .calc-btn {
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calc-btn:hover {
+            background: var(--bg-secondary);
+            transform: scale(1.05);
+        }
+
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+
+        .calc-btn.operator {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .calc-btn.function {
+            background: var(--accent-tertiary);
+            color: white;
+            border-color: var(--accent-tertiary);
+        }
+
+        .calc-btn.wide {
+            grid-column: span 2;
+        }
+
+        
+        .timer-display {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: var(--radius-lg);
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .timer-time {
+            font-size: 4rem;
+            font-weight: 900;
+            font-family: 'Zodiak', serif;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .timer-label {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .timer-preset {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .timer-preset.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .timer-preset:hover {
+            border-color: var(--accent-primary);
+        }
+
+        
+        .session-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-info {
+            flex: 1;
+        }
+
+        .session-type {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .session-duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .session-time {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        
+        .converter-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 2rem;
+        }
+
+        .converter-swap {
+            padding: 1rem;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.25rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .converter-swap:hover {
+            transform: rotate(180deg);
+        }
+
+        .converter-categories {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .converter-category {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .converter-category.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        
+        .password-item {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .password-item:hover {
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .password-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .password-url {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .password-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .password-strength {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            flex: 1;
+            background: var(--border-color);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .strength-bar.active {
+            background: var(--accent-primary);
+        }
+
+        .strength-bar.medium {
+            background: var(--accent-secondary);
+        }
+
+        .strength-bar.strong {
+            background: var(--accent-tertiary);
+        }
+
+        
+        .file-item {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .file-item:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-meta {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        
+        .goal-item {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .goal-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .goal-checkbox.checked {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .goal-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .goal-text {
+            flex: 1;
+        }
+
+        .goal-text.completed {
+            text-decoration: line-through;
+            color: var(--text-tertiary);
+        }
+
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 22, 20, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+        }
+
+        
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 3000;
+            display: none;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        .notification.active {
+            display: block;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--accent-tertiary);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(232, 116, 79, 0.1);
+        }
+
+        
+        @media (max-width: 768px) {
+            .main {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .view-title {
+                font-size: 2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-card {
+                grid-column: span 1;
+            }
+
+            .timer-time {
+                font-size: 3rem;
+            }
+
+            .converter-section {
+                grid-template-columns: 1fr;
+            }
+
+            .converter-swap {
+                transform: rotate(90deg);
+            }
+
+            .calc-btn {
+                padding: 1rem;
+            }
+
+            .notification {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+        }
+
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <span>Life Assistant</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="profileBtn" title="Profile">👤</button>
+            <button class="icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
+        </div>
+    </header>
+
+    
+    <nav class="nav-container">
+        <div class="nav">
+            <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
+            <button class="nav-item" data-view="calculator">🔢 Calculator</button>
+            <button class="nav-item" data-view="timer">⏱️ Focus Timer</button>
+            <button class="nav-item" data-view="converter">🔄 Converter</button>
+            <button class="nav-item" data-view="passwords">🔐 Passwords</button>
+            <button class="nav-item" data-view="files">📁 Files</button>
+            <button class="nav-item" data-view="goals">🎯 Goals</button>
+        </div>
+    </nav>
+
+    
+    <main class="main">
+        
+        <div id="dashboard" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Dashboard</h1>
+                <p class="view-description">Your productivity at a glance</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card dashboard-card">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalFocusTime">0</div>
+                        <div class="stat-label">Focus Sessions</div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalGoals">0</div>
+                        <div class="stat-label">Active Goals</div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalPasswords">0</div>
+                        <div class="stat-label">Saved Passwords</div>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                    </div>
+                    <div class="grid grid-2">
+                        <button class="btn btn-primary" onclick="switchView('timer')">⏱️ Start Focus</button>
+                        <button class="btn btn-secondary" onclick="switchView('goals')">🎯 Add Goal</button>
+                        <button class="btn btn-secondary" onclick="switchView('calculator')">🔢 Calculate</button>
+                        <button class="btn btn-secondary" onclick="switchView('converter')">🔄 Convert</button>
+                    </div>
+                </div>
+
+                <div class="card dashboard-card wide">
+                    <div class="card-header">
+                        <h3 class="card-title">Today's Goals</h3>
+                    </div>
+                    <div id="todayGoals"></div>
+                </div>
+
+                <div class="card dashboard-card full">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Focus Sessions</h3>
+                    </div>
+                    <div id="recentSessions"></div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="calculator" class="view">
+            <div class="view-header">
+                <h1 class="view-title">Scientific Calculator</h1>
+                <p class="view-description">Powerful calculations at your fingertips</p>
+            </div>
+
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="calculator-display">
+                    <div class="calc-input" id="calcInput"></div>
+                    <div class="calc-output" id="calcOutput">0</div>
+                </div>
+
+                <div class="calc-grid">
+                    <button class="calc-btn function" onclick="calculator.function('sin')">sin</button>
+                    <button class="calc-btn function" onclick="calculator.function('cos')">cos</button>
+                    <button class="calc-btn function" onclick="calculator.function('tan')">tan</button>
+                    <button class="calc-btn function" onclick="calculator.function('sqrt')">√</button>
+
+                    <button class="calc-btn function" onclick="calculator.function('log')">log</button>
+                    <button class="calc-btn function" onclick="calculator.function('ln')">ln</button>
+                    <button class="calc-btn function" onclick="calculator.number('(')}">(</button>
+                    <button class="calc-btn function" onclick="calculator.number(')')">)</button>
+
+                    <button class="calc-btn" onclick="calculator.number('7')">7</button>
+                    <button class="calc-btn" onclick="calculator.number('8')">8</button>
+                    <button class="calc-btn" onclick="calculator.number('9')">9</button>
+                    <button class="calc-btn operator" onclick="calculator.operator('/')">÷</button>
+
+                    <button class="calc-btn" onclick="calculator.number('4')">4</button>
+                    <button class="calc-btn" onclick="calculator.number('5')">5</button>
+                    <button class="calc-btn" onclick="calculator.number('6')">6</button>
+                    <button class="calc-btn operator" onclick="calculator.operator('*')">×</button>
+
+                    <button class="calc-btn" onclick="calculator.number('1')">1</button>
+                    <button class="calc-btn" onclick="calculator.number('2')">2</button>
+                    <button class="calc-btn" onclick="calculator.number('3')">3</button>
+                    <button class="calc-btn operator" onclick="calculator.operator('-')">−</button>
+
+                    <button class="calc-btn" onclick="calculator.number('0')">0</button>
+                    <button class="calc-btn" onclick="calculator.number('.')">.</button>
+                    <button class="calc-btn function" onclick="calculator.clear()">C</button>
+                    <button class="calc-btn operator" onclick="calculator.operator('+')">+</button>
+
+                    <button class="calc-btn function" onclick="calculator.number('pi')">π</button>
+                    <button class="calc-btn function" onclick="calculator.number('e')">e</button>
+                    <button class="calc-btn operator" onclick="calculator.operator('^')">x²</button>
+                    <button class="calc-btn operator" onclick="calculator.equals()">=</button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="timer" class="view">
+            <div class="view-header">
+                <h1 class="view-title">Focus Timer</h1>
+                <p class="view-description">Boost your productivity with the Pomodoro technique</p>
+            </div>
+
+            <div class="grid grid-2">
+                <div>
+                    <div class="timer-display">
+                        <div class="timer-time" id="timerDisplay">25:00</div>
+                        <div class="timer-label" id="timerLabel">Ready to focus?</div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="timerStart" onclick="timer.start()">▶ Start</button>
+                        <button class="btn btn-secondary" id="timerPause" onclick="timer.pause()" style="display: none;">⏸ Pause</button>
+                        <button class="btn btn-secondary" onclick="timer.reset()">↻ Reset</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Presets</h3>
+                        </div>
+                        <div class="grid grid-3">
+                            <button class="timer-preset active" onclick="timer.setPreset(25, 'Focus')">
+                                <div style="font-weight: 600;">25 min</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Focus</div>
+                            </button>
+                            <button class="timer-preset" onclick="timer.setPreset(5, 'Short Break')">
+                                <div style="font-weight: 600;">5 min</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Short Break</div>
+                            </button>
+                            <button class="timer-preset" onclick="timer.setPreset(15, 'Long Break')">
+                                <div style="font-weight: 600;">15 min</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">Long Break</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Session History</h3>
+                    </div>
+                    <div id="sessionHistory"></div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="converter" class="view">
+            <div class="view-header">
+                <h1 class="view-title">Unit Converter</h1>
+                <p class="view-description">Convert between units and currencies</p>
+            </div>
+
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="converter-categories">
+                    <button class="converter-category active" onclick="converter.setCategory('length')">Length</button>
+                    <button class="converter-category" onclick="converter.setCategory('weight')">Weight</button>
+                    <button class="converter-category" onclick="converter.setCategory('temperature')">Temperature</button>
+                    <button class="converter-category" onclick="converter.setCategory('area')">Area</button>
+                    <button class="converter-category" onclick="converter.setCategory('volume')">Volume</button>
+                    <button class="converter-category" onclick="converter.setCategory('speed')">Speed</button>
+                    <button class="converter-category" onclick="converter.setCategory('time')">Time</button>
+                </div>
+
+                <div class="converter-section">
+                    <div class="input-group">
+                        <label class="label">From</label>
+                        <input type="number" class="input" id="fromValue" placeholder="Enter value" oninput="converter.convert()">
+                        <select id="fromUnit" class="input" style="margin-top: 0.5rem;" onchange="converter.convert()"></select>
+                    </div>
+
+                    <button class="converter-swap" onclick="converter.swap()">⇄</button>
+
+                    <div class="input-group">
+                        <label class="label">To</label>
+                        <input type="number" class="input" id="toValue" placeholder="Result" readonly>
+                        <select id="toUnit" class="input" style="margin-top: 0.5rem;" onchange="converter.convert()"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="passwords" class="view">
+            <div class="view-header">
+                <h1 class="view-title">Password Manager</h1>
+                <p class="view-description">Securely store and manage your passwords</p>
+            </div>
+
+            <div class="grid grid-2">
+                <div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="openPasswordModal()">+ Add Password</button>
+                    <div id="passwordList"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Password Generator</h3>
+                    </div>
+                    <div class="input-group">
+                        <label class="label">Length: <span id="pwdLength">16</span></label>
+                        <input type="range" min="8" max="32" value="16" id="pwdLengthSlider" oninput="document.getElementById('pwdLength').textContent = this.value" style="width: 100%;">
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="pwdUppercase" checked>
+                            <span>Uppercase letters</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="pwdLowercase" checked>
+                            <span>Lowercase letters</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="pwdNumbers" checked>
+                            <span>Numbers</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="pwdSymbols" checked>
+                            <span>Symbols</span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="passwords.generateAndCopy()">🎲 Generate Password</button>
+                    <input type="text" class="input" id="generatedPassword" readonly style="margin-top: 1rem; font-family: monospace;">
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="files" class="view">
+            <div class="view-header">
+                <h1 class="view-title">File Organizer</h1>
+                <p class="view-description">Save and organize important links and documents</p>
+            </div>
+
+            <button class="btn btn-primary" style="margin-bottom: 1.5rem;" onclick="openFileModal()">+ Add Link/Document</button>
+
+            <div id="fileList"></div>
+        </div>
+
+       
+        <div id="goals" class="view">
+            <div class="view-header">
+                <h1 class="view-title">Daily Goals</h1>
+                <p class="view-description">Track your priorities and achievements</p>
+            </div>
+
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="input-group">
+                    <input type="text" class="input" id="newGoal" placeholder="Enter a new goal...">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="goals.add()">+ Add Goal</button>
+
+                <div id="goalList"></div>
+            </div>
+        </div>
+    </main>
+
+    
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Password</h2>
+                <button class="icon-btn" onclick="closePasswordModal()">✕</button>
+            </div>
+            <div class="input-group">
+                <label class="label">Website Name</label>
+                <input type="text" class="input" id="pwdName">
+            </div>
+            <div class="input-group">
+                <label class="label">URL</label>
+                <input type="text" class="input" id="pwdUrl" placeholder="https://example.com">
+            </div>
+            <div class="input-group">
+                <label class="label">Username/Email</label>
+                <input type="text" class="input" id="pwdUsername">
+            </div>
+            <div class="input-group">
+                <label class="label">Password</label>
+                <input type="password" class="input" id="pwdPassword">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="passwords.save()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal" id="fileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Link/Document</h2>
+                <button class="icon-btn" onclick="closeFileModal()">✕</button>
+            </div>
+            <div class="input-group">
+                <label class="label">Title</label>
+                <input type="text" class="input" id="fileName">
+            </div>
+            <div class="input-group">
+                <label class="label">URL/Link</label>
+                <input type="text" class="input" id="fileUrl" placeholder="https://example.com/document.pdf">
+            </div>
+            <div class="input-group">
+                <label class="label">Category</label>
+                <select class="input" id="fileCategory">
+                    <option value="document">Document</option>
+                    <option value="link">Link</option>
+                    <option value="resource">Resource</option>
+                    <option value="article">Article</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="label">Notes (Optional)</label>
+                <input type="text" class="input" id="fileNotes" placeholder="Add any notes...">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeFileModal()">Cancel</button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="files.save()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Profile Settings</h2>
+                <button class="icon-btn" onclick="closeProfileModal()">✕</button>
+            </div>
+            <div class="input-group">
+                <label class="label">Display Name</label>
+                <input type="text" class="input" id="profileName" placeholder="Your name">
+            </div>
+            <div class="input-group">
+                <label class="label">Theme Preference</label>
+                <select class="input" id="profileTheme">
+                    <option value="auto">Auto (System)</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="label">Default Focus Duration</label>
+                <select class="input" id="profileFocusDuration">
+                    <option value="15">15 minutes</option>
+                    <option value="25" selected>25 minutes</option>
+                    <option value="30">30 minutes</option>
+                    <option value="45">45 minutes</option>
+                    <option value="60">60 minutes</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="profile.save()">Save Settings</button>
+            <button class="btn btn-ghost" style="width: 100%; margin-top: 0.5rem;" onclick="profile.clearAll()">Clear All Data</button>
+        </div>
+    </div>
+
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(viewName).classList.add('active');
+            document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} active`;
+            
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 3000);
+        }
+
+        function openPasswordModal() {
+            document.getElementById('passwordModal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+            document.getElementById('pwdName').value = '';
+            document.getElementById('pwdUrl').value = '';
+            document.getElementById('pwdUsername').value = '';
+            document.getElementById('pwdPassword').value = '';
+        }
+
+        function openFileModal() {
+            document.getElementById('fileModal').classList.add('active');
+        }
+
+        function closeFileModal() {
+            document.getElementById('fileModal').classList.remove('active');
+            document.getElementById('fileName').value = '';
+            document.getElementById('fileUrl').value = '';
+            document.getElementById('fileNotes').value = '';
+        }
+
+        function openProfileModal() {
+            document.getElementById('profileModal').classList.add('active');
+            profile.load();
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const view = item.dataset.view;
+                switchView(view);
+            });
+        });
+
+        
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', newTheme);
+        });
+
+        
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        
+        const profile = {
+            save() {
+                const data = {
+                    name: document.getElementById('profileName').value,
+                    theme: document.getElementById('profileTheme').value,
+                    focusDuration: document.getElementById('profileFocusDuration').value
+                };
+                localStorage.setItem('profile', JSON.stringify(data));
+                showNotification('Profile saved successfully!');
+                closeProfileModal();
+            },
+            load() {
+                const data = JSON.parse(localStorage.getItem('profile') || '{}');
+                if (data.name) document.getElementById('profileName').value = data.name;
+                if (data.theme) document.getElementById('profileTheme').value = data.theme;
+                if (data.focusDuration) document.getElementById('profileFocusDuration').value = data.focusDuration;
+            },
+            clearAll() {
+                if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        };
+
+        document.getElementById('profileBtn').addEventListener('click', openProfileModal);
+
+        
+        const calculator = {
+            display: '',
+            result: '0',
+            
+            number(num) {
+                if (num === 'pi') {
+                    this.display += 'π';
+                } else if (num === 'e') {
+                    this.display += 'e';
+                } else {
+                    this.display += num;
+                }
+                this.updateDisplay();
+            },
+            
+            operator(op) {
+                const ops = {'/': '÷', '*': '×', '-': '−', '+': '+', '^': '^'};
+                this.display += ops[op] || op;
+                this.updateDisplay();
+            },
+            
+            function(fn) {
+                this.display += fn + '(';
+                this.updateDisplay();
+            },
+            
+            clear() {
+                this.display = '';
+                this.result = '0';
+                this.updateDisplay();
+            },
+            
+            equals() {
+                try {
+                    let expr = this.display
+                        .replace(/π/g, Math.PI)
+                        .replace(/e/g, Math.E)
+                        .replace(/÷/g, '/')
+                        .replace(/×/g, '*')
+                        .replace(/−/g, '-')
+                        .replace(/\^/g, '**')
+                        .replace(/sin/g, 'Math.sin')
+                        .replace(/cos/g, 'Math.cos')
+                        .replace(/tan/g, 'Math.tan')
+                        .replace(/sqrt/g, 'Math.sqrt')
+                        .replace(/log/g, 'Math.log10')
+                        .replace(/ln/g, 'Math.log');
+                    
+                    this.result = eval(expr).toString();
+                    if (this.result.includes('.')) {
+                        this.result = parseFloat(this.result).toFixed(8).replace(/\.?0+$/, '');
+                    }
+                } catch (e) {
+                    this.result = 'Error';
+                }
+                this.updateDisplay();
+            },
+            
+            updateDisplay() {
+                document.getElementById('calcInput').textContent = this.display || ' ';
+                document.getElementById('calcOutput').textContent = this.result;
+            }
+        };
+
+        
+        const timer = {
+            minutes: 25,
+            seconds: 0,
+            interval: null,
+            isRunning: false,
+            sessions: [],
+            currentType: 'Focus',
+            
+            start() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    document.getElementById('timerStart').style.display = 'none';
+                    document.getElementById('timerPause').style.display = 'inline-flex';
+                    document.getElementById('timerLabel').textContent = `${this.currentType} in progress...`;
+                    
+                    this.interval = setInterval(() => {
+                        if (this.seconds === 0) {
+                            if (this.minutes === 0) {
+                                this.complete();
+                                return;
+                            }
+                            this.minutes--;
+                            this.seconds = 59;
+                        } else {
+                            this.seconds--;
+                        }
+                        this.updateDisplay();
+                    }, 1000);
+                }
+            },
+            
+            pause() {
+                this.isRunning = false;
+                clearInterval(this.interval);
+                document.getElementById('timerStart').style.display = 'inline-flex';
+                document.getElementById('timerPause').style.display = 'none';
+                document.getElementById('timerLabel').textContent = 'Paused';
+            },
+            
+            reset() {
+                this.pause();
+                this.setPreset(25, 'Focus');
+            },
+            
+            complete() {
+                this.pause();
+                const session = {
+                    type: this.currentType,
+                    duration: this.currentType === 'Focus' ? 25 : this.currentType === 'Short Break' ? 5 : 15,
+                    timestamp: new Date().toISOString()
+                };
+                this.sessions.unshift(session);
+                localStorage.setItem('timerSessions', JSON.stringify(this.sessions));
+                this.renderSessions();
+                this.updateStats();
+                
+                showNotification(`${this.currentType} session completed! 🎉`);
+                document.getElementById('timerLabel').textContent = 'Session Complete!';
+                
+                
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Focus Timer', {
+                        body: `Your ${this.currentType} session is complete!`,
+                        icon: '⏱️'
+                    });
+                }
+            },
+            
+            setPreset(minutes, type) {
+                this.pause();
+                this.minutes = minutes;
+                this.seconds = 0;
+                this.currentType = type;
+                this.updateDisplay();
+                document.getElementById('timerLabel').textContent = 'Ready to focus?';
+                
+                document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('active'));
+                event.target.closest('.timer-preset').classList.add('active');
+            },
+            
+            updateDisplay() {
+                const display = `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
+                document.getElementById('timerDisplay').textContent = display;
+                document.title = `${display} - Life Assistant`;
+            },
+            
+            renderSessions() {
+                const container = document.getElementById('sessionHistory');
+                const recentContainer = document.getElementById('recentSessions');
+                
+                if (this.sessions.length === 0) {
+                    const empty = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><div class="empty-state-text">No sessions yet</div></div>';
+                    container.innerHTML = empty;
+                    if (recentContainer) recentContainer.innerHTML = empty;
+                    return;
+                }
+                
+                const html = this.sessions.slice(0, 10).map(s => {
+                    const date = new Date(s.timestamp);
+                    return `
+                        <div class="session-item">
+                            <div class="session-info">
+                                <div class="session-type">${s.type}</div>
+                                <div class="session-duration">${s.duration} minutes</div>
+                            </div>
+                            <div class="session-time">${date.toLocaleTimeString()}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                container.innerHTML = html;
+                if (recentContainer) recentContainer.innerHTML = html;
+            },
+            
+            updateStats() {
+                const focusSessions = this.sessions.filter(s => s.type === 'Focus').length;
+                document.getElementById('totalFocusTime').textContent = focusSessions;
+            },
+            
+            init() {
+                this.sessions = JSON.parse(localStorage.getItem('timerSessions') || '[]');
+                this.renderSessions();
+                this.updateStats();
+                this.updateDisplay();
+                
+                
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+            }
+        };
+
+       
+        const converter = {
+            currentCategory: 'length',
+            units: {
+                length: {
+                    meter: 1,
+                    kilometer: 0.001,
+                    centimeter: 100,
+                    millimeter: 1000,
+                    mile: 0.000621371,
+                    yard: 1.09361,
+                    foot: 3.28084,
+                    inch: 39.3701
+                },
+                weight: {
+                    kilogram: 1,
+                    gram: 1000,
+                    milligram: 1000000,
+                    pound: 2.20462,
+                    ounce: 35.274
+                },
+                temperature: {
+                    celsius: 'C',
+                    fahrenheit: 'F',
+                    kelvin: 'K'
+                },
+                area: {
+                    'square meter': 1,
+                    'square kilometer': 0.000001,
+                    'square mile': 0.000000386102,
+                    'square yard': 1.19599,
+                    'square foot': 10.7639,
+                    hectare: 0.0001,
+                    acre: 0.000247105
+                },
+                volume: {
+                    liter: 1,
+                    milliliter: 1000,
+                    gallon: 0.264172,
+                    quart: 1.05669,
+                    pint: 2.11338,
+                    cup: 4.22675,
+                    'fluid ounce': 33.814,
+                    tablespoon: 67.628,
+                    teaspoon: 202.884
+                },
+                speed: {
+                    'meter/second': 1,
+                    'kilometer/hour': 3.6,
+                    'mile/hour': 2.23694,
+                    knot: 1.94384,
+                    'foot/second': 3.28084
+                },
+                time: {
+                    second: 1,
+                    minute: 1/60,
+                    hour: 1/3600,
+                    day: 1/86400,
+                    week: 1/604800,
+                    month: 1/2592000,
+                    year: 1/31536000
+                }
+            },
+            
+            setCategory(category) {
+                this.currentCategory = category;
+                document.querySelectorAll('.converter-category').forEach(c => c.classList.remove('active'));
+                event.target.classList.add('active');
+                this.populateUnits();
+            },
+            
+            populateUnits() {
+                const units = Object.keys(this.units[this.currentCategory]);
+                const fromSelect = document.getElementById('fromUnit');
+                const toSelect = document.getElementById('toUnit');
+                
+                fromSelect.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join('');
+                toSelect.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join('');
+                
+                if (units.length > 1) toSelect.selectedIndex = 1;
+                
+                this.convert();
+            },
+            
+            convert() {
+                const value = parseFloat(document.getElementById('fromValue').value) || 0;
+                const fromUnit = document.getElementById('fromUnit').value;
+                const toUnit = document.getElementById('toUnit').value;
+                
+                let result;
+                
+                if (this.currentCategory === 'temperature') {
+                    result = this.convertTemperature(value, fromUnit, toUnit);
+                } else {
+                    const fromFactor = this.units[this.currentCategory][fromUnit];
+                    const toFactor = this.units[this.currentCategory][toUnit];
+                    result = value / fromFactor * toFactor;
+                }
+                
+                document.getElementById('toValue').value = result.toFixed(6).replace(/\.?0+$/, '');
+            },
+            
+            convertTemperature(value, from, to) {
+                
+                let celsius;
+                if (from === 'celsius') celsius = value;
+                else if (from === 'fahrenheit') celsius = (value - 32) * 5/9;
+                else celsius = value - 273.15;
+                
+                
+                if (to === 'celsius') return celsius;
+                else if (to === 'fahrenheit') return celsius * 9/5 + 32;
+                else return celsius + 273.15;
+            },
+            
+            swap() {
+                const fromValue = document.getElementById('fromValue').value;
+                const toValue = document.getElementById('toValue').value;
+                const fromUnit = document.getElementById('fromUnit').value;
+                const toUnit = document.getElementById('toUnit').value;
+                
+                document.getElementById('fromValue').value = toValue;
+                document.getElementById('toValue').value = fromValue;
+                document.getElementById('fromUnit').value = toUnit;
+                document.getElementById('toUnit').value = fromUnit;
+            },
+            
+            init() {
+                this.populateUnits();
+            }
+        };
+
+        
+        const passwords = {
+            list: [],
+            
+            generatePassword() {
+                const length = parseInt(document.getElementById('pwdLengthSlider').value);
+                const useUpper = document.getElementById('pwdUppercase').checked;
+                const useLower = document.getElementById('pwdLowercase').checked;
+                const useNumbers = document.getElementById('pwdNumbers').checked;
+                const useSymbols = document.getElementById('pwdSymbols').checked;
+                
+                let chars = '';
+                if (useUpper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                if (useLower) chars += 'abcdefghijklmnopqrstuvwxyz';
+                if (useNumbers) chars += '0123456789';
+                if (useSymbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+                
+                if (!chars) {
+                    showNotification('Please select at least one character type', 'error');
+                    return '';
+                }
+                
+                let password = '';
+                for (let i = 0; i < length; i++) {
+                    password += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                
+                return password;
+            },
+            
+            generateAndCopy() {
+                const password = this.generatePassword();
+                document.getElementById('generatedPassword').value = password;
+                
+                navigator.clipboard.writeText(password).then(() => {
+                    showNotification('Password copied to clipboard!');
+                });
+            },
+            
+            save() {
+                const pwd = {
+                    id: Date.now(),
+                    name: document.getElementById('pwdName').value,
+                    url: document.getElementById('pwdUrl').value,
+                    username: document.getElementById('pwdUsername').value,
+                    password: btoa(document.getElementById('pwdPassword').value), // Simple encoding
+                    created: new Date().toISOString()
+                };
+                
+                if (!pwd.name || !pwd.username || !pwd.password) {
+                    showNotification('Please fill all required fields', 'error');
+                    return;
+                }
+                
+                this.list.push(pwd);
+                localStorage.setItem('passwords', JSON.stringify(this.list));
+                this.render();
+                closePasswordModal();
+                this.updateStats();
+                showNotification('Password saved successfully!');
+            },
+            
+            delete(id) {
+                if (confirm('Are you sure you want to delete this password?')) {
+                    this.list = this.list.filter(p => p.id !== id);
+                    localStorage.setItem('passwords', JSON.stringify(this.list));
+                    this.render();
+                    this.updateStats();
+                    showNotification('Password deleted');
+                }
+            },
+            
+            copy(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Copied to clipboard!');
+                });
+            },
+            
+            render() {
+                const container = document.getElementById('passwordList');
+                
+                if (this.list.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-text">No passwords saved yet</div></div>';
+                    return;
+                }
+                
+                container.innerHTML = this.list.map(p => `
+                    <div class="password-item">
+                        <div class="password-info">
+                            <h3>${p.name}</h3>
+                            <div class="password-url">${p.url || 'No URL'}</div>
+                        </div>
+                        <div class="password-actions">
+                            <button class="icon-btn" onclick="passwords.copy('${p.username}')" title="Copy username">👤</button>
+                            <button class="icon-btn" onclick="passwords.copy(atob('${p.password}'))" title="Copy password">🔑</button>
+                            <button class="icon-btn" onclick="passwords.delete(${p.id})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+            
+            updateStats() {
+                document.getElementById('totalPasswords').textContent = this.list.length;
+            },
+            
+            init() {
+                this.list = JSON.parse(localStorage.getItem('passwords') || '[]');
+                this.render();
+                this.updateStats();
+            }
+        };
+
+       
+        const files = {
+            list: [],
+            
+            save() {
+                const file = {
+                    id: Date.now(),
+                    name: document.getElementById('fileName').value,
+                    url: document.getElementById('fileUrl').value,
+                    category: document.getElementById('fileCategory').value,
+                    notes: document.getElementById('fileNotes').value,
+                    created: new Date().toISOString()
+                };
+                
+                if (!file.name || !file.url) {
+                    showNotification('Please fill all required fields', 'error');
+                    return;
+                }
+                
+                this.list.push(file);
+                localStorage.setItem('files', JSON.stringify(this.list));
+                this.render();
+                closeFileModal();
+                showNotification('File saved successfully!');
+            },
+            
+            delete(id) {
+                if (confirm('Are you sure you want to delete this file?')) {
+                    this.list = this.list.filter(f => f.id !== id);
+                    localStorage.setItem('files', JSON.stringify(this.list));
+                    this.render();
+                    showNotification('File deleted');
+                }
+            },
+            
+            getIcon(category) {
+                const icons = {
+                    document: '📄',
+                    link: '🔗',
+                    resource: '📚',
+                    article: '📰'
+                };
+                return icons[category] || '📎';
+            },
+            
+            render() {
+                const container = document.getElementById('fileList');
+                
+                if (this.list.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">No files saved yet</div></div>';
+                    return;
+                }
+                
+                container.innerHTML = this.list.map(f => `
+                    <div class="file-item">
+                        <div class="file-icon">${this.getIcon(f.category)}</div>
+                        <div class="file-details">
+                            <div class="file-name">${f.name}</div>
+                            <div class="file-meta">${f.category} • ${new Date(f.created).toLocaleDateString()}</div>
+                            ${f.notes ? `<div class="file-meta" style="margin-top: 0.25rem;">${f.notes}</div>` : ''}
+                        </div>
+                        <div class="password-actions">
+                            <a href="${f.url}" target="_blank" class="icon-btn" title="Open">🔗</a>
+                            <button class="icon-btn" onclick="files.delete(${f.id})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+            
+            init() {
+                this.list = JSON.parse(localStorage.getItem('files') || '[]');
+                this.render();
+            }
+        };
+
+        
+        const goals = {
+            list: [],
+            
+            add() {
+                const text = document.getElementById('newGoal').value.trim();
+                if (!text) {
+                    showNotification('Please enter a goal', 'error');
+                    return;
+                }
+                
+                const goal = {
+                    id: Date.now(),
+                    text,
+                    completed: false,
+                    created: new Date().toISOString()
+                };
+                
+                this.list.push(goal);
+                localStorage.setItem('goals', JSON.stringify(this.list));
+                document.getElementById('newGoal').value = '';
+                this.render();
+                this.updateStats();
+                showNotification('Goal added!');
+            },
+            
+            toggle(id) {
+                const goal = this.list.find(g => g.id === id);
+                if (goal) {
+                    goal.completed = !goal.completed;
+                    localStorage.setItem('goals', JSON.stringify(this.list));
+                    this.render();
+                    this.updateStats();
+                }
+            },
+            
+            delete(id) {
+                this.list = this.list.filter(g => g.id !== id);
+                localStorage.setItem('goals', JSON.stringify(this.list));
+                this.render();
+                this.updateStats();
+            },
+            
+            render() {
+                const container = document.getElementById('goalList');
+                const todayContainer = document.getElementById('todayGoals');
+                
+                if (this.list.length === 0) {
+                    const empty = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">No goals yet</div></div>';
+                    container.innerHTML = empty;
+                    if (todayContainer) todayContainer.innerHTML = empty;
+                    return;
+                }
+                
+                const html = this.list.map(g => `
+                    <div class="goal-item">
+                        <div class="goal-checkbox ${g.completed ? 'checked' : ''}" onclick="goals.toggle(${g.id})"></div>
+                        <div class="goal-text ${g.completed ? 'completed' : ''}">${g.text}</div>
+                        <button class="icon-btn" onclick="goals.delete(${g.id})">🗑️</button>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = html;
+                if (todayContainer) todayContainer.innerHTML = html;
+            },
+            
+            updateStats() {
+                const active = this.list.filter(g => !g.completed).length;
+                document.getElementById('totalGoals').textContent = active;
+            },
+            
+            init() {
+                this.list = JSON.parse(localStorage.getItem('goals') || '[]');
+                this.render();
+                this.updateStats();
+            }
+        };
+
+        
+        timer.init();
+        converter.init();
+        passwords.init();
+        files.init();
+        goals.init();
+
+        
+        document.getElementById('newGoal').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') goals.add();
+        });
+
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript,');
+        }
+
+        console.log('🚀 Life Assistant initialized successfully!');
+    </script>
+</body>
+</html>
